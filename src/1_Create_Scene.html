@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../node_modules/three/build/three.module.js"
+				}
+			}
+		</script>
+
+		<script type="module">
+			// import * as THREE from 'three';
+			import * as THREE from 'three';
+
+			// three.js는 작동하기 위해 scene, camera, renderer가 필요
+			const scene = new THREE.Scene();    // 새로운 Scene 생성
+			// PerspectiveCamera(fov값, 종횡비aspect ratio, near절단면, far절단면)
+			// near보다 가까이 있는 요소, far보다 멀리 있는 요소는 렌더링되지 않음
+			const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+			const renderer = new THREE.WebGLRenderer();	// renderer 생성
+			renderer.setSize(window.innerWidth, window.innerHeight);	// 렌더러의 크기 설정
+			document.body.appendChild( renderer.domElement );
+			
+			// BoxGeometry : 큐브에 필요한 vertices와 faces 포함
+			const geometry = new THREE.BoxGeometry(1, 1, 1);
+			// MeshBasicMaterial : hex color로 material 적용
+			const material = new THREE.MeshBasicMaterial(
+				{
+					color: 0x00ff00,
+					wireframe: true
+				}
+			);
+			// Mesh : 앞서 만든 geometry와 material로 mesh 생성
+			const cube = new THREE.Mesh(geometry, material);
+			// scene.add : 인수로 받은 mesh를 scene에 추가. 기본적으로 (0,0,0) 위치에 생성
+			scene.add(cube);
+			camera.position.z = 5; // 카메라가 큐브와 겹치지 않게 z축 위치 이동
+
+			// 화면이 refresh 될 때마다 계속해서 렌더링
+			function animate()
+			{
+				// window.requestAnimationFrame(콜백 함수): 브라우저가 업데이트 함수를 호출하게 함
+				// 인수로 자기 자신을 집어넣어 매 프레임 업데이트 되게 함
+				requestAnimationFrame(animate);
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+
+				// renderer.render(씬, 카메라): 앞서 생성한 씬과 카메라로 렌더링
+				renderer.render(scene, camera);
+			}
+			animate();
+		</script>
+	</body>
+</html>
